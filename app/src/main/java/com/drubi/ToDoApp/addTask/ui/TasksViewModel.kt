@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drubi.ToDoApp.addTask.domain.AddTaskUseCase
 import com.drubi.ToDoApp.addTask.domain.GetTaskUseCase
+import com.drubi.ToDoApp.addTask.domain.UpdateTaskUseCase
 import com.drubi.ToDoApp.addTask.ui.TaskUiState.Success
 import com.drubi.ToDoApp.addTask.ui.model.TaskModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +24,7 @@ import javax.inject.Inject
 class TasksViewModel
 @Inject constructor(
     private val addTaskUseCase: AddTaskUseCase,
+    private val updateTaskUseCase: UpdateTaskUseCase,
     getTaskUseCase: GetTaskUseCase
 ) : ViewModel() {
 
@@ -66,6 +68,9 @@ class TasksViewModel
 //        _tasks[index] = _tasks[index].let {
 //            it.copy(selected = !it.selected)
 //        }
+        viewModelScope.launch {
+            updateTaskUseCase(taskModel.copy(selected = !taskModel.selected))
+        }
     }
 
     fun onItemRemove(taskModel: TaskModel) {
