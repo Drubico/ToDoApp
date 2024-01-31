@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.drubi.ToDoApp.addTask.domain.TasksViewModel
+import com.drubi.ToDoApp.addTask.ui.TasksViewModel
 import com.drubi.ToDoApp.addTask.ui.TasksScreen
 import com.drubi.ToDoApp.ui.theme.TodoAppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -16,7 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val taskViewModel:TasksViewModel by viewModels()
+    private val taskViewModel: TasksViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

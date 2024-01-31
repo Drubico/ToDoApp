@@ -1,4 +1,4 @@
-package com.drubi.ToDoApp.addTask.domain
+package com.drubi.ToDoApp.addTask.ui
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
