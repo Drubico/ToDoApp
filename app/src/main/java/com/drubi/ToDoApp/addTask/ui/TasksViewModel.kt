@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drubi.ToDoApp.addTask.domain.AddTaskUseCase
+import com.drubi.ToDoApp.addTask.domain.DeleteTaskUseCase
 import com.drubi.ToDoApp.addTask.domain.GetTaskUseCase
 import com.drubi.ToDoApp.addTask.domain.UpdateTaskUseCase
 import com.drubi.ToDoApp.addTask.ui.TaskUiState.Success
@@ -25,6 +26,7 @@ class TasksViewModel
 @Inject constructor(
     private val addTaskUseCase: AddTaskUseCase,
     private val updateTaskUseCase: UpdateTaskUseCase,
+    private val deleteTaskUseCase: DeleteTaskUseCase,
     getTaskUseCase: GetTaskUseCase
 ) : ViewModel() {
 
@@ -77,6 +79,9 @@ class TasksViewModel
         // _tasks.remove(taskModel) -> no funciona porque por el copy no es el mismo objeto
 //        val task = _tasks.find { it.id == taskModel.id }
 //        _tasks.remove(task)
+        viewModelScope.launch {
+            deleteTaskUseCase(taskModel)
+        }
     }
 
 

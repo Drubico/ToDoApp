@@ -18,10 +18,16 @@ class TaskRepository
         }
     }
     suspend fun add(taskModel: TaskModel){
-        taskDao.addTask(TaskEntity(taskModel.id, taskModel.task, taskModel.selected))
+        taskDao.addTask(taskModel.toEntity())
     }
 
     suspend fun update(taskModel: TaskModel){
-        taskDao.updateTask(TaskEntity(taskModel.id, taskModel.task, taskModel.selected))
+        taskDao.updateTask(taskModel.toEntity())
+    }
+
+    suspend fun delete(taskModel: TaskModel){
+        taskDao.deleteTask(taskModel.toEntity())
     }
 }
+
+fun TaskModel.toEntity() = TaskEntity(this.id, this.task, this.selected)
