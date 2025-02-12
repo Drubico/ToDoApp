@@ -10,8 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
@@ -39,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.drubi.ToDoApp.addTask.ui.model.TaskModel
@@ -53,23 +54,25 @@ fun TasksScreen(tasksViewModel: TasksViewModel) {
         initialValue = TaskUiState.Loading,
         key1 = lifecycle,
         key2 = tasksViewModel
-    ){
-       lifecycle.repeatOnLifecycle(
-           state = Lifecycle.State.STARTED
-       ){
-           tasksViewModel.uiState.collect{
-               value = it
-           }
-       }
+    ) {
+        lifecycle.repeatOnLifecycle(
+            state = Lifecycle.State.STARTED
+        ) {
+            tasksViewModel.uiState.collect {
+                value = it
+            }
+        }
     }
 
-    when(uiState){
+    when (uiState) {
         is TaskUiState.Loading -> {
 
         }
+
         is TaskUiState.Error -> {
             CircularProgressIndicator()
         }
+
         is TaskUiState.Success -> {
             Box(modifier = Modifier.fillMaxSize()) {
                 AddTasksDialog(
@@ -88,7 +91,7 @@ fun TasksScreen(tasksViewModel: TasksViewModel) {
 }
 
 @Composable
-fun TaskList(tasks: List<TaskModel>,tasksViewModel: TasksViewModel) {
+fun TaskList(tasks: List<TaskModel>, tasksViewModel: TasksViewModel) {
 
     LazyColumn() {
         items(tasks, key = { it.id }) { task ->
@@ -99,12 +102,21 @@ fun TaskList(tasks: List<TaskModel>,tasksViewModel: TasksViewModel) {
 
 @Composable
 fun ItemTask(taskModel: TaskModel, tasksViewModel: TasksViewModel) {
+    var showDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var text by rememberSaveable {
+        mutableStateOf(taskModel.task)
+    }
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .pointerInput(Unit) {
                 detectTapGestures(
+                    onTap = {
+                        showDialog = true
+                    },
                     onLongPress = {
                         tasksViewModel.onItemRemove(taskModel)
                     }
@@ -129,6 +141,50 @@ fun ItemTask(taskModel: TaskModel, tasksViewModel: TasksViewModel) {
             })
         }
     }
+
+    // alert dialog to edit
+    if (showDialog)
+        Dialog(
+            onDismissRequest = {
+                showDialog = false
+            },
+            properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
+        ) {
+            Column(
+                modifier = Modifier
+                    .background(Color.White)
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = "Editar tarea",
+                    fontSize = 18.sp,
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.size(16.dp))
+                TextField(
+                    value = text,
+                    onValueChange = { text = it },
+                    singleLine = true,
+                    maxLines = 1,
+                )
+                Spacer(modifier = Modifier.size(16.dp))
+                Button(
+                    onClick = {
+                        tasksViewModel.onTaskUpdated(
+                            taskModel.copy(
+                                task = text
+                            )
+                        )
+                        showDialog = false
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = "Actualizar")
+                }
+            }
+        }
+
 }
 
 @Composable

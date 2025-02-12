@@ -75,6 +75,12 @@ class TasksViewModel
         }
     }
 
+    fun onTaskUpdated(taskModel: TaskModel) {
+        viewModelScope.launch {
+            updateTaskUseCase(taskModel)
+        }
+    }
+
     fun onItemRemove(taskModel: TaskModel) {
         // _tasks.remove(taskModel) -> no funciona porque por el copy no es el mismo objeto
 //        val task = _tasks.find { it.id == taskModel.id }
